@@ -1,3 +1,5 @@
+
+
 import GeographicPoint;
 
 public class MapEdge {

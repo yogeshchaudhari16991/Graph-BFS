@@ -1,16 +1,8 @@
-/**
- * 
- */
-package roadgraph;
 
 import java.util.List;
 
-import geography.GeographicPoint;
+import GeographicPoint;
 
-/**
- * @author Yogesh
- *
- */
 public class MapNode {
 	private GeographicPoint location;
 	private List<MapEdge> neighbors;
