@@ -1,4 +1,3 @@
-
 import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.Vector;
@@ -6,19 +5,17 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import GeographicPoint;
 
-
-
 public class MapGraph {
-	
 	private HashMap<GeographicPoint, MapNode> vertices;
-	private Vector visited;
+	private Vector<GeographicPoint> visited;
 	private HashMap<GeographicPoint, GeographicPoint> parent;
 	private List<GeographicPoint> path;
 	private PriorityQueue<GeographicPoint> queue;
-	
+	/** 
+	 * Create a new empty MapGraph 
+	 */
 	
 	public MapGraph()
 	{
@@ -52,6 +49,7 @@ public class MapGraph {
 	}
 
 	
+	
 	public boolean addVertex(GeographicPoint location)
 	{
 		if(location != null){
@@ -78,50 +76,37 @@ public class MapGraph {
 			}
 	}
 	
-
-	
-
 	public List<GeographicPoint> bfs(GeographicPoint start, 
-			 					     GeographicPoint goal)
-	{
-		if(start.equals(goal)){
-			path.add(goal);
-			return getPath();
-		}
-		else
-		{
-			path.add(start);
-			visited.add(start);
-			MapNode current = vertices.get(start);
-			for(MapEdge neighbor : current.getNeighbor()){
-				GeographicPoint next = neighbor.getEnd();
-				if(! visited.contains(next)){
-					//add to queue
+		     GeographicPoint goal){
+		visited.add(start);
+		queue.add(start);
+		while(! queue.isEmpty()){
+			GeographicPoint current = queue.remove();
+			visited.add(current);
+			if(current.equals(goal)){
+				return getPath();
+			}
+			for(MapEdge e : vertices.get(current).getNeighbor()){
+				GeographicPoint next = e.getEnd();
+				if((! visited.contains(next)) && (! queue.contains(next))){
+					parent.put(next, current);
 					queue.add(next);
-					//add parent
-					parent.put(next, start);
 				}
 			}
-			if(!queue.isEmpty()){
-				GeographicPoint nextVertex = queue.remove();
-				return bfs(nextVertex, goal, nodeSearched);
-			}
-			path.remove(start);
-			return path;
 		}
+		return null;
 	}
 	
 	public List<GeographicPoint> getPath(){
 		List<GeographicPoint> pathToVertex = new ArrayList<GeographicPoint>();
-		GeographicPoint goal = path.get(path.size()-1);
+		GeographicPoint goal = visited.get((visited.size()-1));
 		pathToVertex.add(goal);
-		for(int i=(path.size()-1); i >= 0; i--){
-			//backtracking path from goal to start
-			if(!pathToVertex.contains(parent.get(path.get(i))) && parent.get(path.get(i)) != null){
-				pathToVertex.add(parent.get(path.get(i)));
+		for(int i=(visited.size()-1); i >= 0; i--){
+			if(!pathToVertex.contains(parent.get(visited.get(i))) && parent.get(visited.get(i)) != null){
+				pathToVertex.add(parent.get(visited.get(i)));
 			}
 		}
-		//reverse the path to get Path from start to goal
+		//reversing path, so it starts from start vertex and ends at goal vertex
 		List<GeographicPoint> pathToGoal = new ArrayList<GeographicPoint>();
 		for(int i = pathToVertex.size()-1; i>=0; i--) {
 			pathToGoal.add(pathToVertex.get(i));
@@ -134,8 +119,7 @@ public class MapGraph {
 	{
 		System.out.print("Making a new map...");
 		MapGraph theMap = new MapGraph();
-		//add graph details to map and call bfs.
-		
+		System.out.print("DONE. \n Load the map...Call BFS(Start, Goal)");
 	}
 	
 }
